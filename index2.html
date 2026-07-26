@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Eksklusif</title>
+    <!-- Hubungkan ke manifest -->
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        #installBtn {
+            padding: 10px 20px; font-size: 16px; 
+            background-color: #007bff; color: white; 
+            border: none; border-radius: 5px; cursor: pointer;
+            display: none; /* Disembunyikan sampai browser siap */
+        }
+        #install-screen { display: block; }
+        #app-content { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- LAYAR SAAT DIBUKA DI BROWSER -->
+    <div id="install-screen">
+        <h2>Akses Dibatasi 🛑</h2>
+        <p>Aplikasi ini hanya dapat digunakan setelah diinstal ke perangkat Anda.</p>
+        <button id="installBtn">Instal Aplikasi Sekarang</button>
+        <p id="ios-note" style="display: none; color: gray; font-size: 12px;">
+            Pengguna iOS: Tekan ikon "Share" dan pilih "Add to Home Screen".
+        </p>
+    </div>
+
+    <!-- LAYAR APLIKASI UTAMA (SETELAH DIINSTAL) -->
+    <div id="app-content">
+        <h2>Selamat Datang di Aplikasi! 🎉</h2>
+        <p>Anda berhasil membuka aplikasi ini dalam mode standalone (terinstal).</p>
+        <!-- Konten aplikasi Anda di sini -->
+    </div>
+
+    <script>
+        // 1. Daftarkan Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registered'));
+        }
+
+        // 2. Deteksi apakah web berjalan di mode 'standalone' (sudah diinstal)
+        function checkDisplayMode() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            
+            if (isStandalone) {
+                // Sembunyikan layar instal, tampilkan aplikasi
+                document.getElementById('install-screen').style.display = 'none';
+                document.getElementById('app-content').style.display = 'block';
+            }
+        }
+
+        // Jalankan pengecekan saat halaman dimuat
+        checkDisplayMode();
+
+        // 3. Tangani event tombol instal kustom
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+        const iosNote = document.getElementById('ios-note');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Cegah prompt bawaan browser muncul secara otomatis
+            e.preventDefault();
+            // Simpan event untuk digunakan nanti
+            deferredPrompt = e;
+            // Tampilkan tombol instal kita
+            installBtn.style.display = 'inline-block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Tampilkan prompt instalasi bawaan browser
+                deferredPrompt.prompt();
+                // Tunggu respon pengguna
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User menerima instalasi');
+                }
+                // Kosongkan prompt karena hanya bisa dipakai sekali
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
+
+        // Tampilkan catatan manual untuk pengguna iOS (karena iOS tidak mendukung beforeinstallprompt dengan baik)
+        const isIos = () => {
+          const userAgent = window.navigator.userAgent.toLowerCase();
+          return /iphone|ipad|ipod/.test( userAgent );
+        }
+        
+        if (isIos() && !window.matchMedia('(display-mode: standalone)').matches) {
+            iosNote.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
