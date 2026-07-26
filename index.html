@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SIGAP Disiplin</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* Reset margin dan cegah scroll pada body agar terasa seperti aplikasi */
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            font-family: sans-serif;
+            overflow: hidden; /* Mencegah scroll ganda dengan iframe */
+            background-color: #f4f6f9;
+        }
+
+        /* Desain Layar Instalasi yang berada di tengah */
+        #install-screen { 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100%; 
+            text-align: center; 
+            padding: 20px; 
+            box-sizing: border-box;
+        }
+
+        #installBtn {
+            padding: 12px 24px; 
+            font-size: 16px; 
+            font-weight: bold;
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        #installBtn:active { background-color: #0056b3; }
+
+        /* Container Aplikasi (Iframe) */
+        #app-content { 
+            display: none; /* Sembunyikan default */
+            width: 100%; 
+            height: 100%; 
+        }
+
+        /* Buat Iframe memenuhi seluruh layar */
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LAYAR SAAT DIBUKA DI BROWSER -->
+    <div id="install-screen">
+        <h2>Akses Dibatasi 🛑</h2>
+        <p>Aplikasi Sistem Disiplin hanya dapat digunakan setelah diinstal ke perangkat Anda.</p>
+        <button id="installBtn">Instal Aplikasi Sekarang</button>
+        <p id="ios-note" style="display: none; color: gray; font-size: 13px; margin-top: 15px;">
+            Pengguna iOS: Tekan ikon "Share" di bawah, lalu pilih "Add to Home Screen".
+        </p>
+    </div>
+
+    <!-- LAYAR APLIKASI UTAMA (SETELAH DIINSTAL) -->
+    <div id="app-content">
+        <!-- Ganti URL ini dengan URL Web App Google Apps Script Anda (yang berakhiran /exec) -->
+        <iframe src="https://script.google.com/macros/s/AKfycbzPL_h-ZV16U9Lb4Tomkk1fsqthLUeN6LMAc1HnK_kNEFnNWk7Ne7WN7bLkgOjuUqVN5A/exec" allow="camera; microphone"></iframe>
+    </div>
+
+    <script>
+        // 1. Daftarkan Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registered'));
+        }
+
+        // 2. Deteksi display mode
+        function checkDisplayMode() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            
+            if (isStandalone) {
+                // Sembunyikan layar instal, tampilkan iframe
+                document.getElementById('install-screen').style.display = 'none';
+                document.getElementById('app-content').style.display = 'block';
+            }
+        }
+        checkDisplayMode();
+
+        // 3. Tangani event tombol instal
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+        const iosNote = document.getElementById('ios-note');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'inline-block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
+
+        // 4. Deteksi iOS untuk panduan manual
+        const isIos = () => {
+          const userAgent = window.navigator.userAgent.toLowerCase();
+          return /iphone|ipad|ipod/.test( userAgent );
+        }
+        
+        if (isIos() && !window.matchMedia('(display-mode: standalone)').matches) {
+            iosNote.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
