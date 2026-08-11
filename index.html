@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SIGAP SMAKTUPAR</title>
+    <title>SIGAP Disiplin</title>
     <link rel="manifest" href="manifest.json">
     <style>
         /* Reset margin dan cegah scroll pada body agar terasa seperti aplikasi */
@@ -63,11 +63,11 @@
             margin-top: 15px;
             display: none; /* Disembunyikan default */
         }
-        #installBtn { background-color: #28a745; }
-        #installBtn:active { background-color: #1e7e34; }
+        #installBtn { background-color: #007bff; }
+        #installBtn:active { background-color: #0056b3; }
         
-        #openAppBtn { background-color: #007bff; }
-        #openAppBtn:active { background-color: #0056b3; }
+        #openAppBtn { background-color: #28a745; }
+        #openAppBtn:active { background-color: #1e7e34; }
 
         /* Container Aplikasi (Iframe) */
         #app-content { 
@@ -87,7 +87,10 @@
         #status-text { margin-top: 15px; color: #333; font-size: 15px; line-height: 1.5; }
         .highlight { font-weight: bold; color: #28a745; }
         #info-text { margin-top: 0px; color: #333; font-size: 15px; line-height: 1.5; }
-        .highlight { font-weight: bold; color: #28a745; }
+        
+        /* TAMBAHAN: Menghilangkan margin bawaan H2 dan P agar jaraknya rapat */
+        h2 { margin-bottom: 5px; margin-top: 10px; }
+        #info-text p { margin-top: 0; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -95,10 +98,7 @@
     <!-- LAYAR SAAT DIBUKA DI BROWSER -->
     <div id="install-screen">
         <img src="smaktupar-small.png" alt="Logo" style="max-width: 120px; margin-bottom: 15px;">
-        <h2>SIGAP</h2>
-        <div id="info-text">
-            <p>Sistem Integrasi Gerakan Disiplin dan Pembinaan</p>
-        </div>
+        <h2>SIGAP Disiplin</h2>
         
         <div id="status-text">
             <p>Aplikasi ini hanya dapat digunakan setelah diinstal ke perangkat Anda.</p>
@@ -111,8 +111,8 @@
         </div>
 
         <!-- Tombol Instal & Buka -->
-        <button id="installBtn" class="btn">Instal Aplikasi</button>
-        <button id="openAppBtn" class="btn">Petunjuk Penggunaan</button>
+        <button id="installBtn" class="btn">Instal Aplikasi Sekarang</button>
+        <button id="openAppBtn" class="btn">Buka Aplikasi</button>
 
         <p id="ios-note" style="display: none; color: gray; font-size: 13px; margin-top: 20px;">
             Pengguna iOS: Tekan ikon "Share" di bawah, lalu pilih "Add to Home Screen".
@@ -166,6 +166,7 @@
         if (!checkDisplayMode()) {
             let promptFired = false;
             let deferredPrompt;
+            let installTimeout; // Tambahkan variabel timer
 
             // Tangkap event sebelum instalasi muncul
             window.addEventListener('beforeinstallprompt', (e) => {
@@ -173,15 +174,18 @@
                 promptFired = true;
                 deferredPrompt = e;
                 
+                // Hentikan timer pesan "sudah terinstal" agar tidak muncul berkedip
+                clearTimeout(installTimeout); 
+                
                 // Sembunyikan loading, tampilkan tombol instal
                 loadingIndicator.style.display = 'none';
                 installBtn.style.display = 'inline-block';
                 statusText.innerHTML = '<p>Aplikasi siap diinstal ke perangkat Anda.</p>';
             });
 
-            // Logika Timeout (Menunggu 1.5 detik)
-            // Jika dalam 1.5 detik event beforeinstallprompt tidak muncul, kita asumsikan sudah terinstal
-            setTimeout(() => {
+            // Logika Timeout (Diperpanjang menjadi 3 detik / 3000ms)
+            // Jika dalam 3 detik event beforeinstallprompt tidak muncul, asumsikan sudah terinstal
+            installTimeout = setTimeout(() => {
                 if (!promptFired) {
                     loadingIndicator.style.display = 'none';
                     
@@ -194,7 +198,7 @@
                         openAppBtn.style.display = 'inline-block';
                     }
                 }
-            }, 1500); // 1500 milidetik = 1.5 detik
+            }, 3000); // 3000 milidetik = 3 detik
 
             // Event Klik Tombol Instal
             installBtn.addEventListener('click', async () => {
@@ -212,7 +216,7 @@
 
             // Event Klik Tombol Buka Aplikasi (Pemberitahuan)
             openAppBtn.addEventListener('click', () => {
-                alert("Setelah aplikasi diinstal, kembali ke Menu Utama (Home Screen) HP Anda, cari ikon 'SIGAP' dan buka dari sana.");
+                alert("Sistem keamanan browser mencegah kami membuka aplikasi secara otomatis.\n\nSilakan kembali ke Menu Utama (Home Screen) HP Anda, cari ikon 'SIGAP Disiplin', dan buka dari sana.");
             });
         }
     </script>
