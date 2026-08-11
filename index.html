@@ -81,7 +81,6 @@
         }
 
         /* Teks Status */
-        #status-text { margin-top: 15px; color: #333; font-size: 15px; line-height: 1.5; }
         .highlight { font-weight: bold; color: #28a745; }      
         h2 { margin-bottom: 5px; margin-top: 10px; }
         #info-text p { margin-top: 0; margin-bottom: 5px; }
@@ -97,10 +96,6 @@
             <p>Sistem Integrasi<br>Gerakan Disiplin dan Pembinaan</p>
         </div>
         
-        <div id="status-text">
-            <p>Aplikasi ini hanya dapat digunakan setelah diinstal ke perangkat anda.</p>
-        </div>
-
         <!-- Indikator Loading -->
         <div id="loading-indicator">
             <div class="spinner"></div>
@@ -137,7 +132,6 @@
         const appContent = document.getElementById('app-content');
         const loadingIndicator = document.getElementById('loading-indicator');
         const installBtn = document.getElementById('installBtn');
-        const statusText = document.getElementById('status-text');
         const iosNote = document.getElementById('ios-note');
 
         // Fungsi Deteksi iOS
