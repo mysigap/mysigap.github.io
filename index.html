@@ -116,6 +116,9 @@
         <button id="installBtn" class="btn">Instal Aplikasi</button>
         <button id="openAppBtn" class="btn">Petunjuk Penggunaan</button>
 
+        <!-- TAMBAHAN: Tombol Tutup Browser -->
+        <button id="closeBrowserBtn" class="btn" style="background-color: #dc3545; display: none;">Tutup Halaman Ini</button>
+
         <p id="ios-note" style="display: none; color: gray; font-size: 13px; margin-top: 20px;">
             Pengguna iOS: Tekan ikon "Share" di bawah, lalu pilih "Add to Home Screen".
         </p>
@@ -144,6 +147,7 @@
         const loadingIndicator = document.getElementById('loading-indicator');
         const installBtn = document.getElementById('installBtn');
         const openAppBtn = document.getElementById('openAppBtn');
+        const closeBrowserBtn = document.getElementById('closeBrowserBtn'); // TAMBAHAN
         const statusText = document.getElementById('status-text');
         const iosNote = document.getElementById('ios-note');
 
@@ -208,12 +212,31 @@
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
                     if(outcome === 'accepted') {
-                        // Ubah tampilan setelah user menekan tombol instal dan menerima
+                        // Ubah tampilan saat proses instalasi berjalan di background
                         installBtn.style.display = 'none';
-                        statusText.innerHTML = '<p class="highlight">Menginstal aplikasi...</p><p style="font-size: 13px;">Silakan cek layar beranda (Home Screen) Anda beberapa saat lagi.</p>';
+                        openAppBtn.style.display = 'none'; // Sembunyikan tombol lain
+                        loadingIndicator.style.display = 'flex'; // Munculkan loading spinner lagi
+                        loadingIndicator.querySelector('p').innerText = 'Sedang menginstal aplikasi...';
+                        statusText.innerHTML = '<p class="highlight" style="color: #007bff;">Sedang memproses instalasi...</p><p style="font-size: 13px;">Mohon tunggu sebentar hingga selesai.</p>';
                     }
                     deferredPrompt = null;
                 }
+            });
+
+            // TAMBAHAN: TANGKAP EVENT SAAT INSTALASI BENAR-BENAR SELESAI
+            window.addEventListener('appinstalled', (evt) => {
+                loadingIndicator.style.display = 'none'; // Matikan loading spinner
+                statusText.innerHTML = '<p class="highlight">✅ Aplikasi berhasil diinstal!</p><p style="font-size: 13px;">Silakan tutup halaman browser ini dan buka SIGAP dari Layar Beranda (Home Screen) HP Anda.</p>';
+                closeBrowserBtn.style.display = 'inline-block'; // Munculkan tombol tutup
+            });
+
+            // TAMBAHAN: Event Klik Tombol Tutup Browser
+            closeBrowserBtn.addEventListener('click', () => {
+                window.close(); // Mencoba menutup tab otomatis
+                // Fallback jika keamanan browser memblokir penutupan otomatis
+                setTimeout(() => {
+                    alert("Sistem keamanan browser mencegah penutupan otomatis.\n\nSilakan tutup tab/halaman browser ini secara manual (tekan tombol Back / Kembali pada HP Anda).");
+                }, 300);
             });
 
             // Event Klik Tombol Buka Aplikasi (Pemberitahuan)
