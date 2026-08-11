@@ -63,11 +63,11 @@
             margin-top: 15px;
             display: none; /* Disembunyikan default */
         }
-        #installBtn { background-color: #007bff; }
-        #installBtn:active { background-color: #0056b3; }
+        #installBtn { background-color: #28a745; }
+        #installBtn:active { background-color: #1e7e34; }
         
-        #openAppBtn { background-color: #28a745; }
-        #openAppBtn:active { background-color: #1e7e34; }
+        #openAppBtn { background-color: #007bff; }
+        #openAppBtn:active { background-color: #0056b3; }
 
         /* Container Aplikasi (Iframe) */
         #app-content { 
@@ -113,7 +113,7 @@
         </div>
 
         <!-- Tombol Instal & Buka -->
-        <button id="installBtn" class="btn">Instal Aplikasi Sekarang</button>
+        <button id="installBtn" class="btn">Instal Aplikasi</button>
         <button id="openAppBtn" class="btn">Buka Aplikasi</button>
 
         <p id="ios-note" style="display: none; color: gray; font-size: 13px; margin-top: 20px;">
@@ -200,7 +200,7 @@
                         openAppBtn.style.display = 'inline-block';
                     }
                 }
-            }, 3000); // 3000 milidetik = 3 detik
+            }, 5000); // 5000 milidetik = 5 detik
 
             // Event Klik Tombol Instal
             installBtn.addEventListener('click', async () => {
@@ -218,7 +218,7 @@
 
             // Event Klik Tombol Buka Aplikasi (Pemberitahuan)
             openAppBtn.addEventListener('click', () => {
-                alert("Sistem keamanan browser mencegah kami membuka aplikasi secara otomatis.\n\nSilakan kembali ke Menu Utama (Home Screen) HP Anda, cari ikon 'SIGAP Disiplin', dan buka dari sana.");
+                alert("Setelah aplikasi berhasil diinstal silakan kembali ke Menu Utama (Home Screen) HP Anda, cari ikon 'SIGAP' dan buka dari sana.");
             });
         }
     </script>
