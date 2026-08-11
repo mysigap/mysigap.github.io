@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SIGAP Disiplin</title>
+    <title>SIGAP SMAKTUPAR</title>
     <link rel="manifest" href="manifest.json">
     <style>
         /* Reset margin dan cegah scroll pada body agar terasa seperti aplikasi */
@@ -13,7 +13,7 @@
             width: 100%; 
             height: 100%; 
             font-family: sans-serif;
-            overflow: hidden; /* Mencegah scroll ganda dengan iframe */
+            overflow: hidden; 
             background-color: #f4f6f9;
         }
 
@@ -29,103 +29,186 @@
             box-sizing: border-box;
         }
 
-        #installBtn {
+        /* --- CSS UNTUK LOADING SPINNER --- */
+        #loading-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 123, 255, 0.2);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        /* --- CSS TOMBOL --- */
+        .btn {
             padding: 12px 24px; 
             font-size: 16px; 
             font-weight: bold;
-            background-color: #007bff; 
             color: white; 
             border: none; 
             border-radius: 8px; 
             cursor: pointer;
-            display: none;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 15px;
+            display: none; /* Disembunyikan default */
         }
-
+        #installBtn { background-color: #007bff; }
         #installBtn:active { background-color: #0056b3; }
+        
+        #openAppBtn { background-color: #28a745; }
+        #openAppBtn:active { background-color: #1e7e34; }
 
         /* Container Aplikasi (Iframe) */
         #app-content { 
-            display: none; /* Sembunyikan default */
+            display: none; 
             width: 100%; 
             height: 100%; 
         }
 
-        /* Buat Iframe memenuhi seluruh layar */
         iframe {
             width: 100%;
             height: 100%;
             border: none;
             display: block;
         }
+
+        /* Teks Status */
+        #status-text { margin-top: 15px; color: #333; font-size: 15px; line-height: 1.5; }
+        .highlight { font-weight: bold; color: #28a745; }
     </style>
 </head>
 <body>
 
     <!-- LAYAR SAAT DIBUKA DI BROWSER -->
     <div id="install-screen">
-        <img src="smaktupar-small.png">
-        <h2>Selamat Datang</h2>
-        <p>Aplikasi SIGAP Disiplin akan dapat digunakan setelah diinstal ke perangkat anda.</p>
-        <button id="installBtn">Instal Aplikasi Sekarang</button>
-        <p id="ios-note" style="display: none; color: gray; font-size: 13px; margin-top: 15px;">
+        <img src="smaktupar-small.png" alt="Logo" style="max-width: 120px; margin-bottom: 15px;">
+        <h2>SIGAP Disiplin</h2>
+        
+        <div id="status-text">
+            <p>Aplikasi ini hanya dapat digunakan setelah diinstal ke perangkat Anda.</p>
+        </div>
+
+        <!-- Indikator Loading -->
+        <div id="loading-indicator">
+            <div class="spinner"></div>
+            <p style="color: gray; font-size: 14px;">Memeriksa status aplikasi...</p>
+        </div>
+
+        <!-- Tombol Instal & Buka -->
+        <button id="installBtn" class="btn">Instal Aplikasi Sekarang</button>
+        <button id="openAppBtn" class="btn">Buka Aplikasi</button>
+
+        <p id="ios-note" style="display: none; color: gray; font-size: 13px; margin-top: 20px;">
             Pengguna iOS: Tekan ikon "Share" di bawah, lalu pilih "Add to Home Screen".
         </p>
     </div>
 
     <!-- LAYAR APLIKASI UTAMA (SETELAH DIINSTAL) -->
     <div id="app-content">
-        <!-- Ganti URL ini dengan URL Web App Google Apps Script Anda (yang berakhiran /exec) -->
         <iframe src="https://script.google.com/macros/s/AKfycbwZ07mV3Ut5xUmdI95xotp1CvfLdjVhZRMP8e-Sox-47LmLDiDWBVs3g7-y7RBZhD_7Pg/exec" allow="camera; microphone"></iframe>
     </div>
 
     <script>
-        // 1. Daftarkan Service Worker
+        // 1. Daftarkan Service Worker (dengan pengecekan protokol untuk menghindari error di Sandbox/Preview)
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('Service Worker Registered'));
-        }
-
-        // 2. Deteksi display mode
-        function checkDisplayMode() {
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-            
-            if (isStandalone) {
-                // Sembunyikan layar instal, tampilkan iframe
-                document.getElementById('install-screen').style.display = 'none';
-                document.getElementById('app-content').style.display = 'block';
+            if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log('Service Worker Registered'))
+                    .catch((err) => console.warn('Pendaftaran Service Worker gagal (biasa terjadi di preview):', err));
+            } else {
+                console.warn('Pendaftaran Service Worker dilewati karena protokol tidak didukung:', window.location.protocol);
             }
         }
-        checkDisplayMode();
 
-        // 3. Tangani event tombol instal
-        let deferredPrompt;
+        // Referensi Elemen DOM
+        const installScreen = document.getElementById('install-screen');
+        const appContent = document.getElementById('app-content');
+        const loadingIndicator = document.getElementById('loading-indicator');
         const installBtn = document.getElementById('installBtn');
+        const openAppBtn = document.getElementById('openAppBtn');
+        const statusText = document.getElementById('status-text');
         const iosNote = document.getElementById('ios-note');
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'inline-block';
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                installBtn.style.display = 'none';
-            }
-        });
-
-        // 4. Deteksi iOS untuk panduan manual
+        // Fungsi Deteksi iOS
         const isIos = () => {
           const userAgent = window.navigator.userAgent.toLowerCase();
-          return /iphone|ipad|ipod/.test( userAgent );
+          return /iphone|ipad|ipod/.test(userAgent);
         }
-        
-        if (isIos() && !window.matchMedia('(display-mode: standalone)').matches) {
-            iosNote.style.display = 'block';
+
+        // 2. Cek apakah sudah dibuka dari aplikasi (Standalone)
+        function checkDisplayMode() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (isStandalone) {
+                installScreen.style.display = 'none';
+                appContent.style.display = 'block';
+                return true; // Berhenti di sini jika sudah mode aplikasi
+            }
+            return false;
+        }
+
+        // Jalankan logika hanya jika BUKAN mode aplikasi (berarti sedang buka di browser biasa)
+        if (!checkDisplayMode()) {
+            let promptFired = false;
+            let deferredPrompt;
+
+            // Tangkap event sebelum instalasi muncul
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                promptFired = true;
+                deferredPrompt = e;
+                
+                // Sembunyikan loading, tampilkan tombol instal
+                loadingIndicator.style.display = 'none';
+                installBtn.style.display = 'inline-block';
+                statusText.innerHTML = '<p>Aplikasi siap diinstal ke perangkat Anda.</p>';
+            });
+
+            // Logika Timeout (Menunggu 1.5 detik)
+            // Jika dalam 1.5 detik event beforeinstallprompt tidak muncul, kita asumsikan sudah terinstal
+            setTimeout(() => {
+                if (!promptFired) {
+                    loadingIndicator.style.display = 'none';
+                    
+                    if (isIos()) {
+                        // Jika iOS, tampilkan panduan manual
+                        iosNote.style.display = 'block';
+                    } else {
+                        // Jika Android/PC dan tidak ada prompt, asumsikan sudah terinstal
+                        statusText.innerHTML = '<p class="highlight">Aplikasi sepertinya sudah terinstal!</p><p style="font-size: 13px;">Silakan tutup halaman browser ini dan buka dari layar beranda (Home Screen) Anda.</p>';
+                        openAppBtn.style.display = 'inline-block';
+                    }
+                }
+            }, 1500); // 1500 milidetik = 1.5 detik
+
+            // Event Klik Tombol Instal
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if(outcome === 'accepted') {
+                        // Ubah tampilan setelah user menekan tombol instal dan menerima
+                        installBtn.style.display = 'none';
+                        statusText.innerHTML = '<p class="highlight">Menginstal aplikasi...</p><p style="font-size: 13px;">Silakan cek layar beranda (Home Screen) Anda beberapa saat lagi.</p>';
+                    }
+                    deferredPrompt = null;
+                }
+            });
+
+            // Event Klik Tombol Buka Aplikasi (Pemberitahuan)
+            openAppBtn.addEventListener('click', () => {
+                alert("Sistem keamanan browser mencegah kami membuka aplikasi secara otomatis.\n\nSilakan kembali ke Menu Utama (Home Screen) HP Anda, cari ikon 'SIGAP Disiplin', dan buka dari sana.");
+            });
         }
     </script>
 </body>
