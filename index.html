@@ -226,7 +226,7 @@
             // TAMBAHAN: TANGKAP EVENT SAAT INSTALASI BENAR-BENAR SELESAI
             window.addEventListener('appinstalled', (evt) => {
                 loadingIndicator.style.display = 'none'; // Matikan loading spinner
-                statusText.innerHTML = '<p class="highlight">✅ Aplikasi berhasil diinstal!</p><p style="font-size: 13px;">Silakan tutup halaman browser ini dan buka SIGAP dari Layar Beranda (Home Screen) HP Anda.</p>';
+                statusText.innerHTML = '<p class="highlight">Aplikasi berhasil diinstal!</p><p style="font-size: 13px;">Silakan tutup halaman browser ini dan buka SIGAP dari Layar Beranda (Home Screen) HP Anda.</p>';
                 closeBrowserBtn.style.display = 'inline-block'; // Munculkan tombol tutup
             });
 
@@ -235,7 +235,7 @@
                 window.close(); // Mencoba menutup tab otomatis
                 // Fallback jika keamanan browser memblokir penutupan otomatis
                 setTimeout(() => {
-                    alert("Sistem keamanan browser mencegah penutupan otomatis.\n\nSilakan tutup tab/halaman browser ini secara manual (tekan tombol Back / Kembali pada HP Anda).");
+                    alert("Silakan tutup tab/halaman browser ini secara manual (tekan tombol Back/Kembali pada HP Anda).");
                 }, 300);
             });
 
