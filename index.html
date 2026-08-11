@@ -63,11 +63,8 @@
             margin-top: 15px;
             display: none; /* Disembunyikan default */
         }
-        #installBtn { background-color: #007bff; }
-        #installBtn:active { background-color: #0056b3; }
-        
-        #openAppBtn { background-color: #28a745; }
-        #openAppBtn:active { background-color: #1e7e34; }
+        #installBtn { background-color: #28a745; }
+        #installBtn:active { background-color: #1e7e34; }
 
         /* Container Aplikasi (Iframe) */
         #app-content { 
@@ -111,8 +108,7 @@
         </div>
 
         <!-- Tombol Instal & Buka -->
-        <button id="installBtn" class="btn">Instal Aplikasi Sekarang</button>
-        <button id="openAppBtn" class="btn">Buka Aplikasi</button>
+        <button id="installBtn" class="btn">Instal Aplikasi</button>
 
         <p id="ios-note" style="display: none; color: gray; font-size: 13px; margin-top: 20px;">
             Pengguna iOS: Tekan ikon "Share" di bawah, lalu pilih "Add to Home Screen".
@@ -141,7 +137,6 @@
         const appContent = document.getElementById('app-content');
         const loadingIndicator = document.getElementById('loading-indicator');
         const installBtn = document.getElementById('installBtn');
-        const openAppBtn = document.getElementById('openAppBtn');
         const statusText = document.getElementById('status-text');
         const iosNote = document.getElementById('ios-note');
 
@@ -195,7 +190,6 @@
                     } else {
                         // Jika Android/PC dan tidak ada prompt, asumsikan sudah terinstal
                         statusText.innerHTML = '<p class="highlight">Aplikasi sepertinya sudah terinstal!</p><p style="font-size: 13px;">Silakan tutup halaman browser ini dan buka dari layar beranda (Home Screen) anda.</p>';
-                        openAppBtn.style.display = 'inline-block';
                     }
                 }
             }, 3000); // 3000 milidetik = 3 detik
@@ -212,11 +206,6 @@
                     }
                     deferredPrompt = null;
                 }
-            });
-
-            // Event Klik Tombol Buka Aplikasi (Pemberitahuan)
-            openAppBtn.addEventListener('click', () => {
-                alert("Setelah aplikasi berhasil diinstal silakan kembali ke Menu Utama (Home Screen) HP Anda, cari ikon 'SIGAP' dan buka dari sana.");
             });
         }
     </script>
