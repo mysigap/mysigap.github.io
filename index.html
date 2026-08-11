@@ -63,11 +63,11 @@
             margin-top: 15px;
             display: none; /* Disembunyikan default */
         }
-        #installBtn { background-color: #007bff; }
-        #installBtn:active { background-color: #0056b3; }
-        
-        #openAppBtn { background-color: #28a745; }
-        #openAppBtn:active { background-color: #1e7e34; }
+        #installBtn { background-color: #28a745; }
+        #installBtn:active { background-color: #1e7e34; }
+        
+        #openAppBtn { background-color: #007bff; }
+        #openAppBtn:active { background-color: #0056b3; }
 
         /* Container Aplikasi (Iframe) */
         #app-content { 
@@ -95,13 +95,13 @@
     <!-- LAYAR SAAT DIBUKA DI BROWSER -->
     <div id="install-screen">
         <img src="smaktupar-small.png" alt="Logo" style="max-width: 120px; margin-bottom: 15px;">
-        <h2>SIGAP Disiplin</h2>
+        <h2>SIGAP</h2>
         <div id="info-text">
-            <p>Sistem Integrasi Gerakan Disiplin dan Pembinaan</p>
+            <p>Sistem Integrasi<br>Gerakan Disiplin dan Pembinaan</p>
         </div>
         
         <div id="status-text">
-            <p>Aplikasi ini hanya dapat digunakan setelah diinstal ke perangkat Anda.</p>
+            <p>Aplikasi ini hanya dapat digunakan setelah diinstal ke perangkat anda.</p>
         </div>
 
         <!-- Indikator Loading -->
@@ -180,7 +180,7 @@
                 // Sembunyikan loading, tampilkan tombol instal
                 loadingIndicator.style.display = 'none';
                 installBtn.style.display = 'inline-block';
-                statusText.innerHTML = '<p>Aplikasi siap diinstal ke perangkat Anda.</p>';
+                statusText.innerHTML = '<p>Aplikasi siap diinstal ke perangkat anda.</p>';
             });
 
             // Logika Timeout (Diperpanjang menjadi 3 detik / 3000ms)
@@ -194,7 +194,7 @@
                         iosNote.style.display = 'block';
                     } else {
                         // Jika Android/PC dan tidak ada prompt, asumsikan sudah terinstal
-                        statusText.innerHTML = '<p class="highlight">Aplikasi sepertinya sudah terinstal!</p><p style="font-size: 13px;">Silakan tutup halaman browser ini dan buka dari layar beranda (Home Screen) Anda.</p>';
+                        statusText.innerHTML = '<p class="highlight">Aplikasi sepertinya sudah terinstal!</p><p style="font-size: 13px;">Silakan tutup halaman browser ini dan buka dari layar beranda (Home Screen) anda.</p>';
                         openAppBtn.style.display = 'inline-block';
                     }
                 }
@@ -208,7 +208,7 @@
                     if(outcome === 'accepted') {
                         // Ubah tampilan setelah user menekan tombol instal dan menerima
                         installBtn.style.display = 'none';
-                        statusText.innerHTML = '<p class="highlight">Menginstal aplikasi...</p><p style="font-size: 13px;">Silakan cek layar beranda (Home Screen) Anda beberapa saat lagi.</p>';
+                        statusText.innerHTML = '<p class="highlight">Menginstal aplikasi...</p><p style="font-size: 13px;">Silakan cek layar beranda (Home Screen) anda beberapa saat lagi.</p>';
                     }
                     deferredPrompt = null;
                 }
@@ -216,7 +216,7 @@
 
             // Event Klik Tombol Buka Aplikasi (Pemberitahuan)
             openAppBtn.addEventListener('click', () => {
-                alert("Sistem keamanan browser mencegah kami membuka aplikasi secara otomatis.\n\nSilakan kembali ke Menu Utama (Home Screen) HP Anda, cari ikon 'SIGAP Disiplin', dan buka dari sana.");
+                alert("Setelah aplikasi berhasil diinstal silakan kembali ke Menu Utama (Home Screen) HP Anda, cari ikon 'SIGAP' dan buka dari sana.");
             });
         }
     </script>
