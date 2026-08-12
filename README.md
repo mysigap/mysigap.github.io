@@ -12,6 +12,9 @@
 - Multi violation proposal
 - Live-cam shot
 - In-app image preview
+#### 1.3
+- Student's profile picture added
+- Export violations report to PDF
 
 ### Developer:
 Team Labcom (SMK Negeri 1 Paringin, Kabupaten Balangan, Kalimantan Selatan)
