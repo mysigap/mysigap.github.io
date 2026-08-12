@@ -1,5 +1,5 @@
-# mysigap.github.io
-SIGAP (Sistem Integrasi Gerakan Disiplin dan Pembinaan)
+# SIGAP
+## Sistem Integrasi Gerakan Disiplin dan Pembinaan
 
 Logs:
 - 1.0: Initial release
