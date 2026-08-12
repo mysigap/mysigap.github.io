@@ -2,7 +2,7 @@
 SIGAP (Sistem Integrasi Gerakan Disiplin dan Pembinaan)
 
 Logs:
-- 1.0: Inisial release
+- 1.0: Initial release
 - 1.1: Roles added, SP added
 - 1.2: FAB added, multi violation proposal
 
