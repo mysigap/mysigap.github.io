@@ -1,7 +1,5 @@
 # mysigap.github.io
 SIGAP (Sistem Integrasi Gerakan Disiplin dan Pembinaan)
-SMK Negeri 1 Paringin
-Kabupaten Balangan, Kalimantan Selatan
 
 Logs:
 - 1.0: Inisial release
@@ -9,4 +7,4 @@ Logs:
 - 1.2: FAB added, multi violation proposal
 
 Developer:
-Team Labcom
+Team Labcom (SMK Negeri 1 Paringin, Kabupaten Balangan, Kalimantan Selatan)
